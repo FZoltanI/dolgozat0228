@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('barber_id')->references("id")->on("barbers");
             $table->dateTime("appointment")->nullable(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

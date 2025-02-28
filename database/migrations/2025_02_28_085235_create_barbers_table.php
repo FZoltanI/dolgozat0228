@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('barber_name')->nullable(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
