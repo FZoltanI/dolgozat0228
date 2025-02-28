@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Barber;
+use Illuminate\Validation\ValidationException;
+
 class BarberController extends Controller
 {
     function index(){
@@ -12,6 +15,22 @@ class BarberController extends Controller
     }
 
     function store(Request $request){
+        try{
+            $request->validate([
+                "barber_name" => "required|string|max:255", 
+            ], [
+                "required" => "A(z) :attribute megadása kötelező!",
+                "string" => "A(z) :attribute csak szöveg lehet.",
+                "max" => "A(z) :attribute maximum :max karakter hosszú lehet."
+            ], [
+                "barber_name" => "barber neve",
+            ]);
+
+            $barber = Barber::create($request->all());
+            return response()->json(["success" => true, "message" => "A barber sikeresen rögzítve!"], 200, [], JSON_UNESCAPED_UNICODE);
+        } catch(ValidationException $e){
+            return response()->json(["success" => false, "message" => $e->errors()], 400, [], JSON_UNESCAPED_UNICODE);
+        }
     }
 
     function destroy(Request $request){
