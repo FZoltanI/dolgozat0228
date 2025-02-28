@@ -34,6 +34,23 @@ class BarberController extends Controller
     }
 
     function destroy(Request $request){
+        try{
+            $request->validate([
+                "id" => "required|integer|exists:barbers,id"
+            ], [
+                "required" => "A(z) :attribute megadása kötelező!",
+                "integer" => "A(z) :attribute csak szám lehet",
+                "exists" => "A megadott :attribute nem létezik."
+            ]);
 
+            $barber = Barber::findOrFail($request->id);
+            if ($barber->delete()){
+                return response()->json(["success" => true, "message" => "A barber törlése sikeres!"], 200, [], JSON_UNESCAPED_UNICODE);
+            } else {
+                return response()->json(["success" => false, "message" => "A barber nem található!"], 404, [], JSON_UNESCAPED_UNICODE);
+            }
+        } catch(ValidationException $e){
+            return response()->json(["success" => false, "message" => $e->errors()], 400, [], JSON_UNESCAPED_UNICODE);
+        }
     }
 }
